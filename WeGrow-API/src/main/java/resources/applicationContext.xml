@@ -51,5 +51,4 @@
     <tx:annotation-driven transaction-manager="transactionManager" />
     <jpa:repositories base-package="com.wegrow.repository" />
 
-    
 </beans>
