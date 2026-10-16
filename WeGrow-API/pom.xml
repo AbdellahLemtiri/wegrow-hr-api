@@ -10,7 +10,7 @@
   <packaging>war</packaging>
   <name>wegrow</name>
   <!-- FIXME change it to the project's website -->
-  <url>http://exemple.com</url>
+  <url>http://www.example.com</url>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
@@ -86,16 +86,16 @@
       <version>${spring.version}</version>
     </dependency>
     <!-- ==================================== -->
-<dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-orm</artifactId>
-    <version>${spring.version}</version>
-</dependency>
-<dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-context</artifactId>
-    <version>${spring.version}</version>
-</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-core</artifactId>
