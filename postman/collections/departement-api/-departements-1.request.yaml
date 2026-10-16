@@ -1,0 +1,18 @@
+$kind: http-request
+name: /departements
+url: "{{baseUrl}}"
+method: POST
+body:
+  type: json
+  content: "   {\r
+
+    \     \r
+
+    \        \"nom\": \"departement2\",\r
+
+    \        \"description\": \"departement2description\",\r
+
+    \r
+
+    \    }"
+order: 2000

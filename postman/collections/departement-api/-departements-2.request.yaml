@@ -1,0 +1,5 @@
+$kind: http-request
+name: /departements
+url: "{{baseUrl}}/1"
+method: DELETE
+order: 3000

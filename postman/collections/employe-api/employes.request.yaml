@@ -1,4 +1,4 @@
 $kind: http-request
-url: ""
+url: "{{baseUrl}}/3/employes"
 method: GET
 order: 1000
