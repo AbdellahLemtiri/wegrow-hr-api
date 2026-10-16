@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+
+
+
+    <!--DataSource -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/wegrow_db" />
+        <property name="username" value="postgres" />
+        <property name="password" value="admin123" />
+    </bean>
+
+    <!--  JPA  -->
+    <bean id="entityManagerFactory"
+        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="com.wegrow.entity" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="showSql" value="true" />
+                <property name="generateDdl" value="true" />
+                <property name="databasePlatform" value="org.hibernate.dialect.PostgreSQLDialect" />
+            </bean>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.format_sql">true</prop>
+            </props>
+        </property>
+    </bean>
+    <jpa:repositories base-package="com.wegrow.repository" />
+
+
+    <!--  Transaction  -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    <context:annotation-config />
+
+    <!-- Transactions AOP -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="lister*" read-only="true" />
+            <tx:method name="*" rollback-for="java.lang.Exception" />
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <aop:pointcut id="serviceMethods" expression="execution(* com.wegrow.service.impl.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods" />
+    </aop:config>
+
+
+    <!-- Jackson  -->
+    <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+
+
+    <!-- IOC Services  -->
+    <bean id="departementService" class="com.wegrow.service.impl.DepartementServiceImpl">
+        <constructor-arg ref="departementRepository" />
+        <constructor-arg ref="employeRepository" />
+    </bean>
+
+    <bean id="employeService" class="com.wegrow.service.impl.EmployeServiceImpl">
+        <constructor-arg ref="employeRepository" />
+        <constructor-arg ref="departementRepository" />
+    </bean>
+
+
+    <!-- IOC Controllers    -->
+    <bean id="departementController" class="com.wegrow.controller.DepartementController">
+        <constructor-arg ref="departementService" />
+        <constructor-arg ref="objectMapper" />
+    </bean>
+
+
+    <bean id="employeController" class="com.wegrow.controller.EmployeController">
+        <constructor-arg ref="employeService" />
+        <constructor-arg ref="objectMapper" />
+    </bean>
+
+
+
+
+
+
+
+    <!--  URL Handler Mapping -->
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/departements">departementController</prop>
+                <prop key="/departements/*">departementController</prop>
+                <prop key="/departements/*/employes">employeController</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>
